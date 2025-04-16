@@ -1,6 +1,6 @@
+use crate::request::executor::perform_request;
+use crate::request::parser::parse_file;
 use std::env::args;
-
-use request::{parse_file, perform_request};
 
 mod request;
 
