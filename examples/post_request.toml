@@ -1,0 +1,16 @@
+name = "Create user"
+description = "Adds a new user to the system."
+method = "POST"
+url = "https://jsonplaceholder.typicode.com/users"
+body = """"
+    {
+      "firstName": "John",
+      "email": "john.doe@example.com"
+    }
+""""
+
+[headers]
+Content-Type = "application/json"
+
+[params]
+sendWelcomeEmail = "true"
