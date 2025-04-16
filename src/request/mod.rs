@@ -1,5 +1,7 @@
-use serde_derive::Deserialize;
 use std::{collections::HashMap, error::Error, fs};
+
+use reqwest::{Method, Response};
+use serde::Deserialize;
 
 #[derive(Deserialize, Debug)]
 pub enum RequestMethod {
@@ -29,3 +31,14 @@ pub fn parse_file(file_path: &String) -> Result<Request, Box<dyn Error>>{
 
     Ok(result)
 }
+
+pub async fn perform_request(request: Request) -> Result<Response, Box<dyn Error>> {
+    let client = reqwest::Client::new();
+
+    let builder = client.request(Method::GET, request.url);
+
+    let response = builder.send().await?;
+
+    Ok(response)
+}
+

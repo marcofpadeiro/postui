@@ -1,12 +1,13 @@
 use std::env::args;
 
-use request::parse_file;
+use request::{parse_file, perform_request};
 
 mod request;
 
-fn main() {
+#[tokio::main]
+async fn main() {
     let args: Vec<String> = args().collect();
-    let res = parse_file(args.get(1).unwrap());
+    let request = parse_file(args.get(1).unwrap()).unwrap();
 
-    println!("{:?}", res);
+    println!("{}", perform_request(request).await.unwrap().text().await.unwrap());
 }
