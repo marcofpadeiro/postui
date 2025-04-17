@@ -9,6 +9,10 @@ pub async fn perform_request(request: Request) -> Result<Response, Box<dyn Error
 
     let mut builder = client.request(request.method.as_reqwest_method(), request.url);
 
+    println!("{:?}", request.headers);
+    println!("{:?}", request.params);
+    println!("{:?}", request.body);
+    println!("{:?}", request.method);
     if let Some(body) = request.body {
         builder = builder.body(body);
     }
