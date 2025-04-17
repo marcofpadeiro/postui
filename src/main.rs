@@ -3,6 +3,7 @@ use crate::request::parser::parse_file;
 use std::env::args;
 
 mod request;
+mod config;
 
 #[tokio::main]
 async fn main() {
