@@ -12,7 +12,7 @@ pub enum ResponseType {
 
 impl ResponseType {
     pub fn from_str(str: &str) -> Self {
-         match str {
+        match str.to_lowercase().trim() {
             "text" => ResponseType::Text,
             "application" => ResponseType::Application,
             _ => ResponseType::Unknown,
@@ -33,7 +33,7 @@ pub enum ResponseSubtype {
 
 impl ResponseSubtype {
     pub fn from_str(str: &str) -> Self {
-        match str {
+        match str.to_lowercase().trim() {
             "html" => ResponseSubtype::Html,
             "json" => ResponseSubtype::Json,
             "plain" => ResponseSubtype::Plain,
@@ -51,7 +51,7 @@ pub struct ContentType {
 
 impl ContentType {
     pub fn from_str(s: String) -> Self {
-        let (response_type, response_subtype) = if let Some((t, u)) = s.split_once('/') {
+        let (response_type, response_subtype) = if let Some((t, u)) = s.split(';').next().unwrap().split_once('/') {
             let rt = ResponseType::from_str(t);
             let rs = ResponseSubtype::from_str(u);
             (rt, rs)
