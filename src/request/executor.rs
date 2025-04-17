@@ -1,10 +1,10 @@
 use std::error::Error;
 
-use reqwest::Response;
+use crate::response::model::ResponseWrapper;
 
 use super::model::Request;
 
-pub async fn perform_request(request: Request) -> Result<Response, Box<dyn Error>> {
+pub async fn perform_request(request: Request) -> Result<ResponseWrapper, Box<dyn Error>> {
     let client = reqwest::Client::new();
 
     let mut builder = client.request(request.method.as_reqwest_method(), request.url);
@@ -19,6 +19,6 @@ pub async fn perform_request(request: Request) -> Result<Response, Box<dyn Error
 
     let response = builder.send().await?;
 
-    Ok(response)
+    Ok(ResponseWrapper::from_response(response).await)
 }
 
