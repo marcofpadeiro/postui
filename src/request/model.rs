@@ -1,16 +1,38 @@
+use crate::request::url::deserialize_url;
+use crate::request::url::serialize_url;
 use std::collections::HashMap;
 
 use reqwest::Method;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
-#[derive(Deserialize, Debug)]
+use super::url::URL;
+
+#[derive(Serialize, Deserialize, Debug, Default)]
+#[serde(rename_all = "UPPERCASE")]
 pub enum RequestMethod {
+    #[default]
     GET,
     POST,
     DELETE,
     PUT,
     PATCH
 }
+
+
+
+#[derive(Serialize, Deserialize, Debug, Default)]
+#[allow(dead_code)]
+pub struct Request {
+    pub name: String,
+    pub description: Option<String>,
+    pub method: RequestMethod,
+    #[serde(serialize_with = "serialize_url", deserialize_with = "deserialize_url")]
+    pub url: URL,
+    pub body: Option<String>,
+    pub headers: HashMap<String, String>,
+    pub params: HashMap<String, String>
+}
+
 
 #[allow(dead_code)]
 impl RequestMethod {
@@ -33,16 +55,18 @@ impl RequestMethod {
             RequestMethod::PATCH => Method::PATCH,
         }
     }
+
+    pub fn from_str(str: &str) -> RequestMethod {
+        let temp = str.to_uppercase();
+        match temp.as_str() {
+            "GET" => RequestMethod::GET,
+            "POST" => RequestMethod::POST,
+            "PUT" => RequestMethod::PUT,
+            "DELETE" => RequestMethod::DELETE,
+            "PATCH" => RequestMethod::PATCH,
+            _ => RequestMethod::GET
+        }
+
+    }
 }
 
-#[derive(Deserialize, Debug)]
-#[allow(dead_code)]
-pub struct Request {
-    pub name: String,
-    pub description: Option<String>,
-    pub method: RequestMethod,
-    pub url: String,
-    pub body: Option<String>,
-    pub headers: Option<HashMap<String, String>>,
-    pub params: Option<HashMap<String, String>>
-}

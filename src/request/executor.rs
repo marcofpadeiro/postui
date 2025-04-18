@@ -7,7 +7,7 @@ use super::model::Request;
 pub async fn perform_request(request: Request) -> Result<ResponseWrapper, Box<dyn Error>> {
     let client = reqwest::Client::new();
 
-    let mut builder = client.request(request.method.as_reqwest_method(), request.url);
+    let mut builder = client.request(request.method.as_reqwest_method(), request.url.to_raw());
 
     println!("{:?}", request.headers);
     println!("{:?}", request.params);
