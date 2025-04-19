@@ -5,12 +5,14 @@ use ratatui::prelude::*;
 use ratatui::widgets::Borders;
 use ratatui::{DefaultTerminal, Frame, widgets::Block};
 
+use crate::config::get_requests_dir_path;
+
 use super::area::Area;
+use super::collection::Collection;
 
 #[derive(Debug, Default)]
-#[allow(unused)]
 pub struct Tui {
-    collection_expanded: bool,
+    collection: Collection,
     focus: Area,
     editing: bool,
     running: bool,
@@ -18,7 +20,12 @@ pub struct Tui {
 
 impl Tui {
     pub fn new() -> Self {
-        Self::default()
+        Self {
+            collection: Collection::new(),
+            focus: Area::Url,
+            editing: false,
+            running: false,
+        }
     }
 
     pub fn run(mut self, mut terminal: DefaultTerminal) -> Result<(), Box<dyn Error>> {
@@ -37,7 +44,7 @@ impl Tui {
             .constraints([Constraint::Length(5), Constraint::Min(0)])
             .split(frame.area());
 
-        let col_req_constraints = if self.collection_expanded {
+        let col_req_constraints = if self.collection.is_expanded {
             [Constraint::Length(30), Constraint::Min(0)]
         } else {
             [Constraint::Length(0), Constraint::Min(0)]
@@ -67,12 +74,9 @@ impl Tui {
             url_bottom[0],
         );
 
-        self.render_layout_block(
-            frame,
-            col_req_area[0],
-            " Collection ",
-            self.focus == Area::Collection,
-        );
+        self.collection
+            .render(frame, col_req_area[0], self.focus == Area::Collection);
+
         self.render_layout_block(
             frame,
             header_body_area[0],
@@ -129,21 +133,30 @@ impl Tui {
         }
 
         match (key.modifiers, key.code) {
+            // Generic app controls
             (_, KeyCode::Char('q'))
             | (KeyModifiers::CONTROL, KeyCode::Char('c') | KeyCode::Char('C')) => self.quit(),
-            (_, KeyCode::Char('e')) => {
-                self.collection_expanded = !self.collection_expanded;
+            (KeyModifiers::CONTROL, KeyCode::Char('e')) => {
+                self.collection.is_expanded = !self.collection.is_expanded;
             }
-            (_, KeyCode::Char('j')) => {
-                self.focus = self.focus.next(self.collection_expanded);
+            (KeyModifiers::CONTROL, KeyCode::Char('j')) => {
+                self.focus = self.focus.next(self.collection.is_expanded);
             }
-            (_, KeyCode::Char('k')) => {
-                self.focus = self.focus.previous(self.collection_expanded);
+            (KeyModifiers::CONTROL, KeyCode::Char('k')) => {
+                self.focus = self.focus.previous(self.collection.is_expanded);
             }
             (_, KeyCode::Char('i')) => {
                 self.editing = true;
             }
-            _ => {}
+            (_, _) => {
+                // Handle other areas
+                match self.focus {
+                    Area::Collection => self.collection.on_key_event(key),
+                    Area::Url => {}
+                    Area::Request => {}
+                    Area::Body => {}
+                }
+            }
         }
     }
 
