@@ -5,8 +5,6 @@ use ratatui::prelude::*;
 use ratatui::widgets::Borders;
 use ratatui::{DefaultTerminal, Frame, widgets::Block};
 
-use crate::config::get_requests_dir_path;
-
 use super::area::Area;
 use super::collection::Collection;
 
