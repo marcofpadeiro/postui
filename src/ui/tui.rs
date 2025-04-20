@@ -2,7 +2,7 @@ use std::error::Error;
 
 use ratatui::crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind, KeyModifiers};
 use ratatui::prelude::*;
-use ratatui::widgets::{Borders, Paragraph};
+use ratatui::widgets::Paragraph;
 use ratatui::{DefaultTerminal, Frame, widgets::Block};
 
 use crate::request::executor::perform_request;
@@ -129,6 +129,7 @@ impl Tui {
             (KeyModifiers::CONTROL, KeyCode::Char('r')) => {
                 let response = perform_request(self.request.clone()).await.unwrap();
                 self.response_area.content = response.parse_response().await;
+                self.response_area.tabs.go_to(0);
             }
             (_, _) => {
                 // Handle other areas
@@ -137,7 +138,7 @@ impl Tui {
                         if let Some(selected) = self.collection.on_key_event(key) {
                             self.request = parse_file(&selected).unwrap();
                         }
-                    },
+                    }
                     Area::Url => {}
                     Area::Request => self.request_area.on_key_event(key),
                     Area::Response => self.response_area.on_key_event(key),
