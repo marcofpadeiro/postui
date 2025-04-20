@@ -10,8 +10,8 @@ use crate::config::get_requests_dir_path;
 
 #[derive(Debug, Default)]
 pub struct Collection {
-    state: TreeState<String>,
-    pub items: Vec<TreeItem<'static, String>>,
+    pub state: TreeState<String>,
+    items: Vec<TreeItem<'static, String>>,
     pub is_expanded: bool,
 }
 
@@ -57,22 +57,28 @@ impl Collection {
         frame.render_stateful_widget(widget, area, &mut self.state);
     }
 
-    pub fn on_key_event(&mut self, key: KeyEvent) {
+    pub fn on_key_event(&mut self, key: KeyEvent) -> Option<String> {
         match key.code {
             KeyCode::Char('\n' | ' ') => self.state.toggle_selected(),
-            KeyCode::Left => self.state.key_left(),
-            KeyCode::Right => self.state.key_right(),
-            KeyCode::Down => self.state.key_down(),
-            KeyCode::Up => self.state.key_up(),
+            KeyCode::Left | KeyCode::Char('h') => self.state.key_left(),
+            KeyCode::Right | KeyCode::Char('l') => self.state.key_right(),
+            KeyCode::Down | KeyCode::Char('j') => self.state.key_down(),
+            KeyCode::Up | KeyCode::Char('k') => self.state.key_up(),
             KeyCode::Esc => self.state.select(Vec::new()),
             KeyCode::Home => self.state.select_first(),
             KeyCode::End => self.state.select_last(),
             KeyCode::PageDown => self.state.scroll_down(3),
             KeyCode::PageUp => self.state.scroll_up(3),
+            KeyCode::Char('i') => {
+                if self.state.selected().is_empty() {
+                    return None;
+                }
+                return Some(self.state.selected()[0].clone());
+            }
             _ => false,
         };
 
-        return;
+        return None;
     }
 }
 

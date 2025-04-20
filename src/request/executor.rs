@@ -9,10 +9,6 @@ pub async fn perform_request(request: Request) -> Result<ResponseWrapper, Box<dy
 
     let mut builder = client.request(request.method.as_reqwest_method(), request.url.to_raw());
 
-    println!("{:?}", request.headers);
-    println!("{:?}", request.params);
-    println!("{:?}", request.body);
-    println!("{:?}", request.method);
     if let Some(body) = request.body {
         builder = builder.body(body);
     }

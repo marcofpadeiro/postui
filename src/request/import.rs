@@ -16,7 +16,7 @@ pub fn import(file_path: &String) -> Result<(), Box<dyn Error>> {
         let filename = determine_file_name_from_request(&request);
         let dest = out_dir.join(&filename);
 
-        println!("{:?}", dest);
+        // println!("{:?}", dest);
     
         if let Err(e) = write_into_file(&request, dest) {
             eprintln!("Error writing request {}: {}", request.name, e);

@@ -5,7 +5,7 @@ pub enum Area {
     Url,
     Collection,
     Request,
-    Body,
+    Response,
 }
 
 impl Area {
@@ -19,14 +19,14 @@ impl Area {
                 }
             }
             Area::Collection => Area::Request,
-            Area::Request => Area::Body,
-            Area::Body => Area::Url,
+            Area::Request => Area::Response,
+            Area::Response => Area::Url,
         }
     }
 
     pub fn previous(&self, expanded: bool) -> Self {
         match self {
-            Area::Url => Area::Body,
+            Area::Url => Area::Response,
             Area::Collection => Area::Url,
             Area::Request => {
                 if expanded {
@@ -35,7 +35,7 @@ impl Area {
                     Area::Url
                 }
             }
-            Area::Body => Area::Request,
+            Area::Response => Area::Request,
         }
     }
 }

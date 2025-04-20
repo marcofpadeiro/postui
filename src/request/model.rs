@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 
 use super::url::URL;
 
-#[derive(Serialize, Deserialize, Debug, Default)]
+#[derive(Serialize, Deserialize, Debug, Default, Clone)]
 #[serde(rename_all = "UPPERCASE")]
 pub enum RequestMethod {
     #[default]
@@ -20,7 +20,7 @@ pub enum RequestMethod {
 
 
 
-#[derive(Serialize, Deserialize, Debug, Default)]
+#[derive(Serialize, Deserialize, Debug, Default, Clone)]
 #[allow(dead_code)]
 pub struct Request {
     pub name: String,
